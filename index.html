@@ -1,0 +1,349 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>진로의 갈림길 · 픽셀 월드 V20</title><style>
+:root{--bg:#e6ebd6;--ink:#273c36;--edge:#345146;--paper:#fffbee;--accent:#78a889}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,'Malgun Gothic',sans-serif}header{padding:15px 20px;background:#304f41;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:20px;margin:0}button,select,input{font:inherit}button{border:2px solid var(--edge);border-radius:5px;background:#fff8db;padding:9px 13px;cursor:pointer;font-weight:700;color:var(--ink)}button:hover{background:#d3edc8}button:disabled{opacity:.4;cursor:default}.wrap{max-width:1120px;margin:18px auto;padding:0 12px}.card{background:var(--paper);border:3px solid var(--edge);box-shadow:5px 5px 0 #9eaf98;padding:17px;margin-bottom:16px}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,1fr);gap:18px}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.choice{padding:12px 5px;min-height:80px}.choice.active{background:#a9d6a6;outline:3px solid #638769}.pixel{font-size:35px;display:block;margin-bottom:5px;image-rendering:pixelated}input{padding:10px;border:2px solid var(--edge);width:100%;max-width:350px;background:white}canvas{display:block;width:100%;image-rendering:pixelated;background:#9dc28c;border:3px solid var(--edge)}.hint{font-size:13px;line-height:1.6;color:#566d5b}.hidden{display:none!important}.maptree{overflow:auto;min-height:190px;max-height:390px}.tree{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:8px}.node{border:2px solid var(--edge);padding:7px 10px;background:#e3f0d6;font-size:13px;max-width:100%;border-radius:4px}.branch{border-left:3px dashed #7c9b80;padding-left:20px;margin-left:15px;display:flex;flex-direction:column;gap:8px}.options{display:grid;gap:8px;margin-top:13px}.options button{text-align:left;background:#e8f2df}.options button:hover{background:#b5ddb2}.progress{height:13px;background:#d5dfd1;border:2px solid var(--edge);margin:10px 0}.bar{height:100%;background:#6ea77c;width:0%}.badge{background:#e1eadb;border:1px solid #839d88;padding:5px 8px;display:inline-block;margin:3px;font-size:13px}.overlay{position:fixed;inset:0;background:#1b2b24b8;display:flex;align-items:center;justify-content:center;padding:15px;z-index:4}.dialog{background:#fffced;border:4px solid #304d41;padding:22px;max-width:550px;width:100%;max-height:90vh;overflow:auto;box-shadow:7px 7px #1e342b}.dialog h2{margin-top:0}.dialogHead{display:flex;justify-content:flex-end;gap:8px;margin:-10px -10px 10px}.dialogHead button{font-size:12px;padding:5px 9px}.resumeDialog{position:fixed;bottom:18px;right:18px;z-index:8;background:#d5f6e2;border:3px solid #304d41;box-shadow:4px 4px #1e342b}.overlay.minimized{display:none}.dialog .options{max-height:48vh;overflow:auto}.stat{font-weight:bold;color:#3c7b54}.foot{font-size:12px;color:#607264;margin-top:20px}.ctrl{display:grid;grid-template-columns:repeat(3,52px);gap:5px;justify-content:center;margin:10px}.ctrl button{padding:8px}.adminrow{border-bottom:1px solid #bac7b7;padding:9px 0}#notice{color:#a13e3e;font-weight:700}@media(max-width:780px){.layout{grid-template-columns:1fr}.choices{grid-template-columns:repeat(3,1fr)}h1{font-size:16px}header button{font-size:12px}}
+
+button:focus-visible,a:focus-visible,input:focus-visible{outline:4px solid #2169a8;outline-offset:3px} .skiplink{position:absolute;left:-9999px;top:4px;background:white;padding:10px;z-index:20}.skiplink:focus{left:8px}.options button{min-height:48px}.questbox{background:#e4f4ed;border:2px dashed #527d66;padding:10px;margin:8px 0}.mini-chart{display:flex;align-items:end;gap:6px;min-height:95px;overflow-x:auto;padding:10px}.mini-chart div{min-width:43px;text-align:center;font-size:11px}.mini-chart span{display:block;background:#659f80;margin:auto;width:26px;min-height:2px}.actionrow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}@media(max-width:480px){.dialog{padding:13px}.card{padding:12px}.ctrl{grid-template-columns:repeat(3,56px)}button{min-height:44px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body><a class="skiplink" href="#play">게임으로 바로가기</a><header><h1>🌿 진로의 갈림길 <small>PIXEL WORLD V20</small></h1><button onclick="openAdmin()">⚙ 운영자 · 통계</button></header><main class="wrap"><section id="setup" class="card"><h2>🎮 진로 탐험 참가 등록</h2><p>기본 정보를 입력하고 나만의 진로 탐험을 시작하세요.</p><h3>1. 성별</h3><div class="choices" style="grid-template-columns:repeat(2,1fr)"><button id="male" class="choice active" onclick="setGender('남')">♂ 남</button><button id="female" class="choice" onclick="setGender('여')">♀ 여</button></div><h3>2. 나이</h3><input id="age" type="number" min="8" max="100" placeholder="나이를 숫자로 입력"><h3>3. 현재 직업 / 신분</h3><input id="occupation" maxlength="40" placeholder="예: 고등학생, 대학생, 직장인, 취업준비생"><h3>4. 최종 원하는 결과</h3><div id="goals" class="options"></div><h3>5. 닉네임</h3><input id="nick" maxlength="12" placeholder="2~12자 닉네임"><p class="hint">욕설·부적절한 표현은 사용할 수 없어요. 닉네임·나이·직업은 게임 화면에만 사용되며 서버로 전송하지 않습니다. 서버 운영 시 목표 선택과 익명 진행·상담 버튼 클릭 횟수만 집계합니다. 상담 신청 및 통화 완료 여부는 확인하지 않습니다.</p><p id="notice" role="alert"></p><button onclick="start()">탐험 시작 ▶</button></section><section id="play" class="layout hidden"><div><div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><strong id="player"></strong><span id="step"></span></div><div class="progress"><div id="bar" class="bar"></div></div><canvas id="world" width="480" height="352" aria-label="진로 탐험 지도"></canvas><p class="hint">⌨ 방향키 또는 WASD로 움직이세요. 선택에 따라 서로 다른 지역과 질문을 탐험하세요. 마을마다 포탈은 하나입니다. 포탈에 들어가 질문에 답하면 다음 마을로 이동합니다. 10문항마다 중간 결과를 확인할 수 있습니다. 모바일에서는 아래 버튼을 사용하세요. 건물 입구 옆에서 E 또는 Enter로 실내에 들어가 NPC와 대화할 수 있습니다.</p><div class="ctrl"><span></span><button onclick="move(0,-1)">▲</button><span></span><button onclick="move(-1,0)">◀</button><button onclick="move(0,1)">▼</button><button onclick="move(1,0)">▶</button></div><button onclick="locateSign()">🌀 포탈 위치 안내</button><button onclick="showCollection()">📖 직업 도감 · 업적</button><button onclick="visitBuilding()">🚪 가까운 건물 문 열기 (E / Enter)</button><p id="zone" class="hint"></p></div></div><aside><div class="card"><h3>🌳 나의 선택 마인드맵</h3><div id="tree" class="maptree"></div></div><div class="card"><h3>🧭 모험 기록</h3><div id="quest" class="questbox" aria-live="polite"></div><div id="log" class="hint"></div></div></aside></section><section id="result" class="card hidden"><h2>🏆 나의 진로 탐험 결과</h2><p id="resultIntro"></p><div id="resultList"></div><div class="actionrow"><button onclick="saveResultCard()">🖼️ 결과 카드 PNG 저장</button><button onclick="shareResult()">📤 결과 공유</button><button onclick="showCollection()">📖 직업 도감</button></div><canvas id="shareCanvas" width="720" height="900" class="hidden" aria-hidden="true"></canvas><p class="hint">응답한 문항의 경향을 반영한 결과입니다. 이 결과는 흥미 탐색을 위한 게임형 추천이며, 표준화된 심리검사나 확정적인 진로 판정이 아닙니다.</p><div class="consult-links" style="display:grid;gap:10px;margin:22px 0 16px"><a onclick="statsEvent('consult')" href="https://open.kakao.com/o/s8OkYLKi" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;padding:14px 12px;border:3px solid #2d3a35;border-radius:8px;background:#fee500;color:#241e00;font-weight:800;text-decoration:none">💬 1:1 진로 상담 신청하기 ↗</a><a onclick="statsEvent('school')" href="http://sbsartdg.com/" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;padding:14px 12px;border:3px solid #2d3a35;border-radius:8px;background:#dceee7;color:#183e35;font-weight:800;text-decoration:none">🏫 관련 학원 홈페이지 보기 ↗</a></div><button onclick="restart()">↻ 다시 탐험하기</button></section><p class="foot">V20 · 서버 실행 시 여러 기기의 익명 이용 통계가 합산됩니다. 파일만 열면 기존 로컬 체험 모드로 작동합니다. 관리자 계정은 서버에서 인증합니다.</p></main><div id="modal" class="overlay hidden"><div class="dialog"><div class="dialogHead"><button onclick="minimizeModal()" title="맵 보기">▾ 창 내리기 · 맵 보기</button></div><div id="modalBody"></div></div></div><button id="resumeDialog" class="resumeDialog hidden" onclick="restoreModal()">▴ 질문 / 결과 창 다시 열기</button><script>
+const goalNames=['취업 성공','대학 입학','업무 활용','스펙업 및 이직','취미'];let gender='남',goal=0,age=0,occupation='',idx=0,pos={x:4,y:8},answers=[],scores={},name='',warnings=0,kicked=false,route=[];
+function setGender(g){gender=g;document.getElementById('male').classList.toggle('active',g==='남');document.getElementById('female').classList.toggle('active',g==='여')}
+function setGoal(i){goal=i;document.querySelectorAll('#goals button').forEach((b,j)=>b.classList.toggle('active',i===j))}
+document.getElementById('goals').innerHTML=goalNames.map((g,i)=>`<button class="choice ${i===0?'active':''}" onclick="setGoal(${i})">${i+1}) ${g}</button>`).join('');
+const careers=[['초등학교 교사','education'],['중·고등학교 교사','education'],['유치원 교사','education'],['직업훈련 강사','education'],['교육 콘텐츠 기획자','education'],['교육행정 공무원','public'],['일반행정 공무원','public'],['세무 공무원','public'],['사회복지 공무원','public'],['경찰관','safety'],['소방관','safety'],['재난안전 담당자','safety'],['응급구조사','safety'],['스타트업 창업자','business'],['소상공인 창업자','business'],['서비스 기획 창업자','business'],['사업개발 담당자','business'],['경영 컨설턴트','business'],['사무행정 전문가','office'],['인사·총무 담당자','office'],['회계·재무 담당자','office'],['데이터 분석가','tech'],['웹디자이너','design'],['UX/UI 디자이너','design'],['그래픽 디자이너','design'],['브랜드 디자이너','design'],['영상기획자','media'],['영상편집자','media'],['방송 PD','media'],['방송작가','media'],['모션그래픽 디자이너','media'],['CG·VFX 아티스트','3d'],['3D 모델러','3d'],['게임 아티스트','3d'],['인테리어 디자이너','space'],['가구 디자이너·제작자','space'],['건축설계 전문가','space'],['BIM 모델러','space'],['기계설계·제작자','machine'],['제품 설계 엔지니어','machine'],['반도체 생산·공정 기술자','machine'],['자동화 설비 기술자','machine'],['웹 개발자','tech'],['AI 서비스 기획자','tech'],['마케팅 기획자','office'],['콘텐츠 크리에이터','media']];
+const qs=[
+['새로운 프로젝트를 시작한다면?',[['전체 일정을 정리한다','office'],['멋진 화면을 구상한다','design'],['이야기와 장면을 만든다','media'],['직접 작동하는 것을 만든다','machine']]],
+['학교 축제를 준비한다면?',[['예산과 인원을 관리한다','office'],['포스터와 웹페이지를 만든다','design'],['홍보 영상을 제작한다','media'],['무대 장치를 설계한다','space']]],
+['문제가 생겼을 때 나는?',[['원인을 표로 정리한다','office'],['사람이 쓰기 편하게 바꾼다','design'],['새로운 아이디어를 떠올린다','media'],['구조와 작동 방식을 점검한다','machine']]],
+['하루 동안 배울 수 있다면?',[['엑셀과 데이터 정리','office'],['포토샵과 피그마','design'],['프리미어와 애프터이펙트','media'],['캐드와 3D 모델링','3d']]],
+['어떤 공간에서 일하고 싶나요?',[['협업하는 사무실','office'],['디자인 스튜디오','design'],['촬영·편집 스튜디오','media'],['설계실이나 제작 현장','space']]],
+['가장 뿌듯한 순간은?',[['복잡한 일을 효율화했을 때','tech'],['내 디자인을 누군가 좋아할 때','design'],['내 영상에 사람들이 몰입할 때','media'],['내가 만든 물건이 완성될 때','machine']]],
+['미래에 만들고 싶은 것은?',[['업무 자동화 서비스','tech'],['편리한 앱 화면','design'],['영화 같은 3D 장면','3d'],['사람들이 머무는 공간','space']]],
+['마지막 선택! 더 끌리는 일은?',[['숫자와 계획을 다루기','office'],['화면과 경험을 디자인하기','design'],['스토리와 영상을 만들기','media'],['기술과 구조를 설계하기','machine']]]
+];
+function badNick(s){return /(시발|씨발|ㅅㅂ|병신|ㅂㅅ|개새|fuck|shit|sex|좆|지랄)/i.test(s)||/[<>]/.test(s)}
+function start(){let n=document.getElementById('nick').value.trim(),a=Number(document.getElementById('age').value),o=document.getElementById('occupation').value.trim();pending=false;if(n.length<2||n.length>12||badNick(n)){document.getElementById('notice').textContent='닉네임을 확인해 주세요. (2~12자, 욕설 금지)';return}if(!Number.isInteger(a)||a<8||a>100){document.getElementById('notice').textContent='나이를 8~100 사이의 숫자로 입력해 주세요.';return}if(!o||badNick(o)){document.getElementById('notice').textContent='현재 직업 또는 신분을 입력해 주세요.';return}name=n;age=a;occupation=o;trackedMilestones=new Set();trackedFinish=false;discovered=new Set();milestoneSnapshots=[];lastRecommended=[];statsEvent('start');idx=0;answers=[];scores={};route=[];warnings=0;kicked=false;pos={x:4,y:8};selectedPortal=null;document.getElementById('setup').classList.add('hidden');document.getElementById('result').classList.add('hidden');document.getElementById('play').classList.remove('hidden');update();modal(`<h2>🗺️ 탐험 시작!</h2><p>${escapeHtml(name)}님 · ${escapeHtml(goalNames[goal])} 목표</p><p>파란 포탈에 들어가 질문에 답하세요. 답변에 따라 새로운 마을이 나타납니다.</p><button onclick="closeModal()">출발 ▶</button>`)}
+function update(){document.getElementById('player').textContent=`${gender==='남'?'♂':'♀'} ${name} · ${age}세 · ${goalNames[goal]}`;document.getElementById('step').textContent=`${idx} / ${TOTAL} 선택`;document.getElementById('bar').style.width=(idx/TOTAL*100)+'%';document.getElementById('tree').innerHTML='<div class="tree"><div class="node">🌱 탐험 시작</div>'+answers.map((a,i)=>`<div class="branch"><div class="node">Q${i+1}. ${escapeHtml(a.question||"진로 탐색")}</div><div class="branch"><div class="node">↳ ${escapeHtml(a.label)}</div></div></div>`).join('')+(idx<TOTAL?`<div class="branch"><div class="node">❔ 다음 갈림길 대기 중</div></div>`:'')+'</div>';document.getElementById('quest').textContent=idx>=TOTAL?'🏆 모든 질문 완료!':`🧭 현재 퀘스트: ${idx+1}번 질문 포탈로 이동하세요 · 포탈 좌표 (8, 5) · 완료 ${idx}/40`;document.getElementById('log').innerHTML=answers.map((a,i)=>`<p>✔ ${i+1}번: ${escapeHtml(a.label)}</p>`).join('')||'첫 갈림길에서 나만의 선택을 해보세요.';draw()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+let pending=false,selectedPortal=null;
+const TILE=32, MW=24,MH=18;
+const TOTAL=40;
+const STATS_KEY='career_rpg_v18_aggregate';
+let trackedMilestones=new Set(),trackedFinish=false;
+function statsRead(){try{return JSON.parse(localStorage.getItem(STATS_KEY))||{}}catch(e){return {}}}
+let remoteRunId=null,serverOnline=false,adminPoll=null;
+async function remoteEvent(type){try{if(type==='start'){const r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({goal:goalNames[goal]})});if(!r.ok)return;remoteRunId=(await r.json()).runId;serverOnline=true;return}if(!remoteRunId)return;const kind=type;await fetch('/api/event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({runId:remoteRunId,kind}),keepalive:true})}catch(e){serverOnline=false}}
+function statsEvent(type){if(type==='start')remoteRunId=null;void remoteEvent(type);try{let s=statsRead();s.started=s.started||0;s.finished=s.finished||0;s.checkpoints=s.checkpoints||{};s.goals=s.goals||{};s.consultClicks=s.consultClicks||0;s.schoolClicks=s.schoolClicks||0;if(type==='start'){s.started++;s.goals[goalNames[goal]]=(s.goals[goalNames[goal]]||0)+1}else if(type==='finish')s.finished++;else if(type==='consult')s.consultClicks++;else if(type==='school')s.schoolClicks++;else if(type.startsWith('checkpoint')){let n=type.slice(10);s.checkpoints[n]=(s.checkpoints[n]||0)+1}localStorage.setItem(STATS_KEY,JSON.stringify(s))}catch(e){}}
+function resetStats(){if(!confirm('이 브라우저에 저장된 익명 집계 통계를 삭제할까요?'))return;localStorage.removeItem(STATS_KEY);adminPanel()}
+
+const signs=Array.from({length:TOTAL},()=>({x:9,y:8}));
+const landmarkSets={
+ office:[['행정 센터','#b88d63'],['데이터 사무실','#6d9aa3'],['회의관','#a49b7b']],
+ design:[['웹 디자인실','#b97fbb'],['브랜드 스튜디오','#d3a5a1'],['UX 연구소','#789cb2']],
+ media:[['방송국','#748bc6'],['편집 스튜디오','#b79a8e'],['촬영 세트','#9b85ba']],
+ machine:[['기계 공장','#a78a62'],['반도체 랩','#76a6b4'],['자동화 연구소','#86977a']],
+ tech:[['코딩 연구소','#7199a5'],['AI 센터','#8b87c1'],['데이터 센터','#7eaf9a']],
+ space:[['건축 사무소','#96a98b'],['인테리어실','#d1a68d'],['가구 공방','#bca06f']],
+ education:[['학교','#d1a766'],['교육 연구실','#a4b6cc'],['도서관','#9ab89b']],public:[['시청','#a8b7a0'],['공공서비스 센터','#b1a6c4'],['민원실','#a4b6cc']],safety:[['소방서','#d98b77'],['경찰서','#8aa7d2'],['안전 훈련장','#b6b39a']],business:[['스타트업 캠퍼스','#d5b17b'],['창업 지원센터','#9dbb9a'],['공유 오피스','#a3a9c6']], '3d':[['3D 모델링실','#a38ac3'],['CG 제작소','#8a94b6'],['게임 스튜디오','#b8a09b']],
+ start:[['진로 학교','#b88d63'],['모험 안내소','#8eae87'],['꿈의 연구소','#8c9fb2']]};
+function getLandmarks(){let v=landmarkSets[currentTheme()]||landmarkSets.start;let a=[{x:12,y:2,w:5,h:4,name:v[0][0],color:v[0][1]},{x:16,y:11,w:5,h:4,name:v[1][0],color:v[1][1]},{x:2,y:12,w:5,h:4,name:v[2][0],color:v[2][1]}];if([7,17,27,37].includes(idx+1))a.push({x:9,y:11,w:4,h:3,name:'상담사 연결',color:'#ffdc86'});return a}
+const zoneNames=['시작의 숲'];
+const themeQuestions={office:['계획을 세울 때 더 즐거운 일은?',[['일정과 예산 정리','office'],['자료를 분석해 개선','tech'],['사람들에게 알리기','media'],['브랜드 방향 정하기','design']]],design:['디자인 프로젝트에서 맡고 싶은 역할은?',[['웹 화면과 사용성','design'],['3D 장면 만들기','3d'],['영상 속 그래픽','media'],['공간 꾸미기','space']]],media:['콘텐츠 제작에서 가장 끌리는 과정은?',[['스토리와 대본','media'],['영상 컷 편집','media'],['CG 장면 제작','3d'],['홍보 기획과 일정','office']]],machine:['직접 만들고 싶은 것은?',[['움직이는 기계','machine'],['실내 가구','space'],['반도체·생산 공정','machine'],['자동화 프로그램','tech']]],tech:['기술을 배운다면?',[['웹 서비스 개발','tech'],['데이터 분석','tech'],['업무 자동화','office'],['인터페이스 설계','design']]],space:['공간 관련 작업에서 하고 싶은 일은?',[['건축 도면과 BIM','space'],['인테리어 스타일링','space'],['가구 직접 제작','machine'],['3D 공간 시각화','3d']]],'3d':['3D로 만들고 싶은 것은?',[['게임 캐릭터','3d'],['영화 CG','3d'],['제품 시제품','machine'],['건축 시각화','space']]]};
+themeQuestions.education=['누군가를 가르친다면 가장 보람 있는 순간은?',[['학생이 이해하고 성장할 때','education'],['학습 콘텐츠를 직접 만들 때','design'],['학교 제도를 개선할 때','public'],['교육 서비스를 창업할 때','business']]];
+themeQuestions.public=['공공 분야에서 가장 하고 싶은 일은?',[['민원과 행정 서비스 개선','public'],['시민 안전 현장 대응','safety'],['교육 정책과 학교 지원','education'],['공공 데이터 분석','tech']]];
+themeQuestions.safety=['위기 상황에서 맡고 싶은 역할은?',[['현장 구조와 소방 활동','safety'],['질서 유지와 범죄 예방','safety'],['재난 대응 체계 기획','public'],['안전 장비와 기술 개발','machine']]];
+themeQuestions.business=['창업을 한다면 가장 자신 있는 역할은?',[['고객 문제 찾고 사업화','business'],['홍보 콘텐츠와 브랜딩','media'],['서비스 앱 개발','tech'],['예산과 운영 관리','office']]];
+const themeZones={office:'업무 기획 타운',design:'디자인 아틀리에',media:'방송 스튜디오',machine:'기술 제작 공방',tech:'미래 IT 연구소',space:'건축·인테리어 거리','3d':'3D 크리에이터 랩',education:'교육 마을',public:'공공서비스 도시',safety:'안전 수호 지구',business:'창업 혁신 밸리'};
+const themeColors={office:'#d5c69d',design:'#d4a3cc',media:'#9caee0',machine:'#c4a27c',tech:'#9bc7cd',space:'#b6c8a4','3d':'#b7a8d8',education:'#e1d6a8',public:'#b6cbbd',safety:'#d8b3a7',business:'#d8c6a2'};
+function currentTheme(){return idx===0?'start':(route[idx-1]||'office')}
+const categories=['office','design','media','machine','tech','space','3d','education','public','safety','business'];
+const labels={office:'사무·경영',design:'디자인',media:'영상·방송',machine:'기계·제조',tech:'IT·데이터',space:'건축·공간','3d':'3D·CG',education:'교육·교직',public:'공공행정',safety:'경찰·소방·안전',business:'창업·경영'};
+const progressiveQuestions=[["가장 관심이 가는 직업 분야는?", [["현장에서 직접 일하는 직종", "machine"], ["사무실에서 기획·관리하는 직종", "office"], ["디자인·콘텐츠를 만드는 직종", "design"], ["건축·공간을 설계하는 직종", "space"]]], ["일자리나 진로를 고를 때 가장 중요한 기준은?", [["성과에 따른 보상과 성장", "business"], ["오래 일할 수 있는 안정성", "public"], ["높은 연봉과 전문성", "tech"], ["좋아하는 일을 직업으로", "media"]]], ["다음 중 관심 있는 역할은?", [["사람을 가르치고 돕는 역할", "education"], ["시민의 안전을 지키는 역할", "safety"], ["제품·설비를 만드는 역할", "machine"], ["새로운 서비스를 시작하는 역할", "business"]]], ["가장 해보고 싶은 프로젝트는?", [["웹사이트나 브랜드 만들기", "design"], ["영상과 방송 콘텐츠 제작", "media"], ["건물이나 공간 설계", "space"], ["앱·AI 서비스 만들기", "tech"]]], ["일할 때 더 중요한 것은?", [["체계적인 규정과 절차", "public"], ["새로운 아이디어를 시도할 자유", "business"], ["정확한 기술과 품질", "machine"], ["사람과의 소통과 성장", "education"]]], ["어떤 장소가 가장 끌리나요?", [["학교와 교육기관", "education"], ["사무실과 공공기관", "office"], ["제작 현장과 연구실", "machine"], ["스튜디오와 창작 공간", "media"]]], ["어떤 결과를 만들어 보고 싶나요?", [["편리한 디지털 서비스", "tech"], ["눈에 보이는 시각 작품", "design"], ["안전하고 유용한 공간", "space"], ["사람에게 직접 도움이 되는 서비스", "safety"]]], ["새로운 일을 배울 때 선호하는 방식은?", [["문서와 원리를 차근차근 이해", "public"], ["직접 도구를 만지며 실습", "machine"], ["사례를 보고 창의적으로 응용", "design"], ["사람들과 토론하고 발표", "education"]]], ["관심이 가는 사회 분야는?", [["교육과 청소년 성장", "education"], ["치안과 재난 대응", "safety"], ["산업과 첨단 기술", "tech"], ["지역 상권과 새로운 사업", "business"]]], ["가장 가까운 미래의 나의 모습은?", [["안정적인 조직의 전문 인력", "office"], ["개성 있는 창작 전문가", "media"], ["기술로 문제를 해결하는 전문가", "tech"], ["자신의 사업을 운영하는 사람", "business"]]], ["팀 프로젝트에서 맡고 싶은 역할은?", [["일정·예산·업무 조율", "office"], ["콘셉트·디자인 제작", "design"], ["기술 개발과 문제 해결", "tech"], ["팀을 이끌고 방향 제시", "business"]]], ["업무 중 문제가 생기면?", [["규정과 사례를 먼저 확인", "public"], ["관련된 사람들과 소통", "education"], ["수치와 원인을 분석", "tech"], ["현장 상황을 직접 점검", "safety"]]], ["하루 일과에서 더 즐거운 것은?", [["자료 정리와 문서 작성", "office"], ["사람에게 설명하고 상담", "education"], ["시각적인 결과물 제작", "design"], ["장비나 설비를 다루기", "machine"]]], ["함께 일할 때 선호하는 분위기는?", [["역할이 분명하고 안정적인 팀", "public"], ["자유롭게 아이디어를 나누는 팀", "media"], ["정밀한 기준으로 협업하는 팀", "machine"], ["빠르게 실험하고 도전하는 팀", "business"]]], ["성취감을 가장 크게 느끼는 순간은?", [["누군가 이해하고 성장할 때", "education"], ["문제를 해결해 시스템이 개선될 때", "tech"], ["내 작품에 반응이 생길 때", "media"], ["완성된 제품·공간을 볼 때", "space"]]], ["어떤 업무 도구를 배워 보고 싶나요?", [["엑셀·회계·업무 프로그램", "office"], ["디자인·편집 프로그램", "design"], ["CAD·3D 설계 도구", "space"], ["코딩·데이터 분석 도구", "tech"]]], ["업무에서 감당할 수 있는 부담은?", [["반복적인 정확성 검토", "office"], ["마감에 맞춘 창작과 수정", "media"], ["현장 이동과 물리적 활동", "safety"], ["새로운 사업의 불확실성", "business"]]], ["내가 더 잘하고 싶은 능력은?", [["설명·지도·의사소통", "education"], ["기획·운영·관리", "office"], ["시각적 표현과 창의력", "design"], ["기술 분석과 제작", "machine"]]], ["고객이나 이용자를 만난다면?", [["불편을 듣고 제도를 안내", "public"], ["배움과 성장을 돕기", "education"], ["요구에 맞는 디자인 제안", "design"], ["제품이나 서비스를 판매·검증", "business"]]], ["나에게 맞는 성장 방식은?", [["자격과 경력을 차곡차곡 쌓기", "public"], ["포트폴리오 작품을 축적하기", "media"], ["기술 숙련도를 높이기", "machine"], ["새 사업 기회를 찾아 도전하기", "business"]]], ["현실적인 과제를 맡는다면?", [["회사 업무 절차 개선", "office"], ["앱의 사용자 경험 개선", "design"], ["영상 캠페인 기획·제작", "media"], ["기계 장치의 오류 해결", "machine"]]], ["현장에서 우선 확인할 것은?", [["작업자의 안전과 위험 요소", "safety"], ["사용자와 고객의 요구", "business"], ["도면과 공간의 활용도", "space"], ["자료의 정확성과 규정", "public"]]], ["어떤 결과물을 포트폴리오로 만들까요?", [["서비스 기획서·업무 개선안", "office"], ["웹·브랜드 디자인 시안", "design"], ["영상 쇼릴·콘텐츠 기획서", "media"], ["건축 도면·공간 모델", "space"]]], ["새로운 기술을 실무에 적용한다면?", [["AI로 사무 업무 자동화", "tech"], ["3D로 시각효과 제작", "3d"], ["스마트 설비·생산 개선", "machine"], ["온라인 교육 콘텐츠 제작", "education"]]], ["예상치 못한 상황에서 맡고 싶은 일은?", [["사람을 구조하고 현장 대응", "safety"], ["팀과 고객에게 상황 설명", "public"], ["기술적 문제를 진단·수리", "machine"], ["대안을 기획해 사업 지속", "business"]]], ["깊게 공부하고 싶은 세부 분야는?", [["교육학·수업 설계", "education"], ["법·행정·공공정책", "public"], ["건축·인테리어 설계", "space"], ["IT·AI·데이터", "tech"]]], ["어떤 직무 체험을 선택할까요?", [["방송국 촬영·편집 체험", "media"], ["디자인 스튜디오 체험", "design"], ["반도체·제조 공정 체험", "machine"], ["스타트업 서비스 기획 체험", "business"]]], ["내가 맡을 최종 책임은?", [["교육생의 학습 성과", "education"], ["공공서비스의 정확성", "public"], ["콘텐츠의 완성도", "media"], ["설비와 제품의 품질", "machine"]]], ["장기적으로 어떤 전문가가 되고 싶나요?", [["사람을 돕는 교육·안전 전문가", "education"], ["조직을 운영하는 관리 전문가", "office"], ["창작물을 만드는 전문 제작자", "3d"], ["독립적인 창업·사업 전문가", "business"]]], ["내게 가장 맞는 실제 업무는?", [["고객 문제를 분석하고 기획", "business"], ["자료를 분석하고 개선", "tech"], ["디자인을 만들고 수정", "design"], ["공간·기계를 설계하고 제작", "space"]]]];
+const adaptiveQuestions={"office": [["사무 업무 중 가장 선호하는 것은?", [["인사·조직·일정 관리", "office"], ["회계·예산 관리", "office"], ["업무 데이터 분석", "tech"], ["홍보·마케팅 기획", "business"]]], ["어떤 조직에서 일하고 싶나요?", [["일반 기업 사무팀", "office"], ["공공기관 행정팀", "public"], ["스타트업 운영팀", "business"], ["학교 행정팀", "education"]]]], "design": [["디자인 분야에서 가장 끌리는 세부 직무는?", [["웹 화면 디자인", "design"], ["브랜드·포스터 디자인", "design"], ["영상 속 모션그래픽", "media"], ["3D 시각 디자인", "3d"]]], ["어떤 작업 결과를 만들고 싶나요?", [["사용하기 쉬운 앱 화면", "design"], ["상품과 브랜드의 시각물", "design"], ["영상의 타이틀·그래픽", "media"], ["게임 캐릭터 디자인", "3d"]]]], "media": [["영상 제작 중 가장 끌리는 과정은?", [["콘텐츠 기획·구성", "media"], ["영상 촬영과 현장 연출", "media"], ["컷 편집과 색보정", "media"], ["CG·합성 효과 제작", "3d"]]], ["어떤 콘텐츠에 집중하고 싶나요?", [["예능·방송 프로그램", "media"], ["유튜브·숏폼 영상", "media"], ["광고·브랜드 영상", "design"], ["영화·게임 CG", "3d"]]]], "machine": [["제조·기술 분야에서 원하는 작업은?", [["기계 도면·제품 설계", "machine"], ["생산·반도체 공정 관리", "machine"], ["자동화 설비 운영", "tech"], ["가구·제품 직접 제작", "space"]]], ["어떤 문제를 해결하고 싶나요?", [["기계의 작동 정확도", "machine"], ["제품의 생산 효율", "machine"], ["자동화 소프트웨어", "tech"], ["제품의 외형과 사용성", "design"]]]], "space": [["공간 분야에서 가장 흥미로운 직무는?", [["건축 도면·BIM 설계", "space"], ["실내 인테리어 기획", "space"], ["가구 설계·제작", "machine"], ["3D 건축 시각화", "3d"]]], ["어떤 공간 프로젝트를 해보고 싶나요?", [["주거·상업 건물 설계", "space"], ["카페·매장 인테리어", "space"], ["맞춤형 가구 제작", "machine"], ["가상 공간 모델링", "3d"]]]], "tech": [["IT 분야에서 가장 하고 싶은 일은?", [["웹·앱 개발", "tech"], ["데이터 분석·자동화", "tech"], ["AI 서비스 기획", "business"], ["UI/UX 설계", "design"]]], ["어떤 문제를 기술로 해결하고 싶나요?", [["웹서비스 기능 구현", "tech"], ["데이터 기반 의사결정", "tech"], ["고객 서비스 사업화", "business"], ["디지털 화면 사용성", "design"]]]], "3d": [["3D 분야에서 더 끌리는 일은?", [["게임 캐릭터 모델링", "3d"], ["영화 CG·VFX", "3d"], ["제품 3D 설계", "machine"], ["건축 렌더링", "space"]]], ["어떤 결과물을 만들고 싶나요?", [["게임 배경과 캐릭터", "3d"], ["실사 합성·시각효과", "3d"], ["3D 프린팅 시제품", "machine"], ["인테리어 공간 렌더", "space"]]]], "education": [["교육 분야에서 가르치고 싶은 대상은?", [["어린이와 초등학생", "education"], ["중·고등학생", "education"], ["성인 직업훈련 수강생", "education"], ["온라인 학습 서비스 이용자", "tech"]]], ["어떤 교육 활동을 선호하나요?", [["교실 수업과 생활 지도", "education"], ["학습 콘텐츠 기획", "education"], ["교육기관 운영·행정", "public"], ["교육용 앱·플랫폼 개발", "tech"]]]], "public": [["공공 분야에서 맡고 싶은 업무는?", [["일반 행정과 민원", "public"], ["학교·교육 행정", "education"], ["세무·예산 관리", "office"], ["사회복지 서비스", "public"]]], ["어떤 공익 문제에 관심 있나요?", [["행정 서비스 개선", "public"], ["교육 기회 확대", "education"], ["복지 사각지대 지원", "public"], ["재난 예방과 안전", "safety"]]]], "safety": [["안전 분야에서 더 끌리는 역할은?", [["경찰 치안·범죄 예방", "safety"], ["소방·화재 진압", "safety"], ["응급구조와 현장 지원", "safety"], ["재난 대응 계획 수립", "public"]]], ["어떤 현장 상황에 관심이 있나요?", [["지역 치안과 조사", "safety"], ["화재 예방과 구조", "safety"], ["응급 처치와 이송", "safety"], ["안전 설비와 장비 개발", "machine"]]]], "business": [["창업을 한다면 어떤 형태가 좋나요?", [["기술 기반 스타트업", "tech"], ["카페·매장 등 소상공업", "business"], ["콘텐츠·브랜드 사업", "media"], ["서비스 기획·컨설팅", "office"]]], ["창업에서 가장 자신 있는 업무는?", [["고객 발굴과 시장 조사", "business"], ["제품·서비스 기획", "business"], ["홍보와 콘텐츠 제작", "media"], ["운영·재무 관리", "office"]]]]};
+const goalOpeners=[
+  ['취업하고 싶은 직종의 큰 분야는?','취업처를 선택할 때 가장 중요한 1순위 기준은?'],
+  ['대학에서 공부하고 싶은 큰 전공 분야는?','대학·학과를 고를 때 가장 중요한 기준은?'],
+  ['현재 업무에 더 활용하고 싶은 분야는?','업무 역량을 높일 때 가장 중요한 기준은?'],
+  ['이직하고 싶은 직무의 큰 분야는?','새 직장을 선택할 때 가장 중요한 기준은?'],
+  ['취미로 깊게 배워보고 싶은 분야는?','취미 활동을 선택할 때 가장 중요한 기준은?']
+];
+const goalFirstOptions=[
+ [['현장직·제조·기술','machine'],['사무직·행정·관리','office'],['디자인·영상·콘텐츠','design'],['건축·공간·설계','space']],
+ [['교육·사회·행정 계열','education'],['디자인·예술·영상 계열','design'],['공학·IT·제조 계열','tech'],['건축·공간·설계 계열','space']],
+ [['사무·업무 자동화','office'],['디자인·콘텐츠 제작','design'],['IT·데이터 분석','tech'],['현장·설계·제조 기술','machine']],
+ [['사무·경영 직무','office'],['디자인·미디어 직무','design'],['IT·기술 직무','tech'],['교육·공공·안전 직무','public']],
+ [['그림·디자인 만들기','design'],['영상·콘텐츠 제작','media'],['기계·공예·DIY','machine'],['코딩·3D·디지털 제작','tech']]
+];
+function strongestTheme(){const tally={};for(const a of answers){tally[a.key]=(tally[a.key]||0)+1}let sorted=Object.keys(tally).sort((a,b)=>tally[b]-tally[a]);return sorted[0]||currentTheme()||'office'}
+function currentQuestion(){
+ if(idx===0)return [goalOpeners[goal][0],goalFirstOptions[goal]];
+ if(idx===1)return [goalOpeners[goal][1],progressiveQuestions[1][1]];
+ if(idx<30)return progressiveQuestions[idx];
+ let theme=strongestTheme();let pool=adaptiveQuestions[theme]||adaptiveQuestions.office;
+ let block=pool[(idx-30)%pool.length];
+ let suffix=['가장 먼저 해보고 싶은 것은?','더 오래 몰입할 수 있는 것은?','실제로 배우고 싶은 것은?','내가 맡고 싶은 역할은?','결과물로 남기고 싶은 것은?'];
+ return [idx<32?block[0]:`${block[0]} (${suffix[Math.floor((idx-32)/2)%5]})`,block[1]];
+}
+function currentZone(){return idx===0?'시작의 숲':(themeZones[currentTheme()]||'진로 탐험 지역')}
+function pathTile(x,y){return (y===8&&x>=3&&x<=12)||(x===8&&y>=4&&y<=12)||(y===11&&x>=8&&x<=15)}
+function blocked(x,y){if(x<1||y<1||x>=MW-1||y>=MH-1)return true;return getLandmarks().some(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h)}
+const portalThemes={office:['office','public','business'],design:['design','3d','media'],media:['media','design','3d'],tech:['tech','machine','business'],machine:['machine','tech','space'],space:['space','design','machine'],'3d':['3d','media','tech'],education:['education','public','media'],public:['public','education','safety'],safety:['safety','public','education'],business:['business','office','tech'],start:['design','media','tech']};
+const portalNames={office:'사무',public:'공공',business:'창업',design:'디자인',media:'영상',tech:'IT',machine:'기계',space:'건축','3d':'3D',education:'교육',safety:'안전'};
+function getPortals(){return [{x:8,y:5,key:currentTheme()}]}
+const buildingDescriptions={
+'진로학교':'다양한 진로를 체험하고, 관심 분야를 발견하는 출발점입니다.',
+'행정센터':'민원 안내, 서류 처리, 공공서비스 운영 등 행정 업무를 알아보는 공간입니다.',
+'학교':'교사와 학생이 수업·상담·교육 활동을 진행하는 공간입니다.',
+'도서관':'자료 탐색과 학습, 교육 콘텐츠 기획에 활용되는 공간입니다.',
+'방송국':'프로그램 기획, 촬영, 연출과 편집이 협업하는 방송 제작 현장입니다.',
+'디자인실':'브랜드·웹·시각 디자인 시안을 제작하고 피드백을 받는 작업실입니다.',
+'건축 사무소':'건축 도면과 BIM 모델을 만들고 공간을 설계하는 곳입니다.',
+'소방서':'화재 예방과 진압, 구조·구급 출동을 준비하는 공공 안전 시설입니다.',
+'경찰서':'치안 유지, 범죄 예방, 신고 접수와 주민 안전을 담당하는 곳입니다.',
+'연구소':'기술을 실험하고 데이터를 분석해 새로운 해결책을 찾는 공간입니다.',
+'공장':'제품 생산과 설비 운영, 품질 관리가 이루어지는 산업 현장입니다.',
+'창업센터':'사업 아이디어를 검증하고 창업 교육과 사업화 지원을 받는 곳입니다.'};
+function buildingInfo(name){if(buildingDescriptions[name])return buildingDescriptions[name];if(/영상|편집|촬영|스튜디오|CG|게임/.test(name))return '콘텐츠를 기획하고 촬영·편집·시각효과를 제작하는 전문 공간입니다.';if(/디자인|브랜드|아틀리에/.test(name))return '시각 표현과 사용자 경험을 연구하고 작품을 제작하는 공간입니다.';if(/건축|설계|가구|공방|인테리어/.test(name))return '도면과 재료를 바탕으로 공간이나 제품을 설계·제작하는 곳입니다.';if(/기계|반도체|생산|제조/.test(name))return '장비를 운용하고 생산 공정과 품질을 관리하는 기술 현장입니다.';if(/교육|학습|학교/.test(name))return '배움을 돕고 수업을 설계하며 교육 서비스를 제공하는 공간입니다.';if(/행정|민원|시청|공공/.test(name))return '시민에게 필요한 공공서비스와 행정 업무를 수행하는 곳입니다.';if(/사무|데이터|센터|오피스/.test(name))return '정보를 관리하고 협업하며 업무를 기획·운영하는 공간입니다.';return '이 분야의 직무와 실제 작업 환경을 알아보는 체험 건물입니다.'}
+function nearbyBuilding(){return getLandmarks().find(b=>{let doorX=b.x+Math.floor(b.w/2),doorY=b.y+b.h;return Math.abs(pos.x-doorX)+Math.abs(pos.y-doorY)<=2})}
+function oldVisitBuilding(){if(kicked||document.getElementById('play').classList.contains('hidden'))return;let b=nearbyBuilding();if(!b){modal('<h2>🚪 건물 방문</h2><p>건물 아래쪽 중앙의 문 앞으로 이동해 주세요.</p><button onclick="closeModal()">맵으로 돌아가기</button>');return}modal(`<h2>🏠 ${escapeHtml(b.name)}</h2><p>${escapeHtml(buildingInfo(b.name))}</p><p class="hint">이 건물은 진로 분야를 알아보는 정보 공간입니다. 질문은 마을의 포탈에서 진행합니다.</p><button onclick="closeModal()">🚪 밖으로 나가기 · 탐험 계속</button>`)}
+ 
+// V15: 건물별 작은 실내 맵과 NPC 대화
+let indoor=null;let discovered=new Set(),milestoneSnapshots=[],lastRecommended=[];
+function visitBuilding(){
+ if(kicked||document.getElementById('play').classList.contains('hidden'))return;
+ let b=nearbyBuilding();
+ if(!b){modal('<h2>🚪 건물 방문</h2><p>건물 아래쪽 중앙의 문 앞으로 이동해 주세요.</p><button onclick="closeModal()">확인</button>');return}
+ indoor={name:b.name,x:3,y:5};discovered.add(b.name);if(b.name==='상담사 연결'){showCounselorRoom();return}showIndoor();
+}
+function showCounselorRoom(){
+ if(!indoor)return;
+ modal(`<h2>📞 상담사 연결 · 상담실</h2><p>진로가 고민될 때 담당 상담사에게 문의할 수 있는 공간입니다.</p><p class="hint">현재 ${idx+1}번 질문을 앞두고 있어요. 전화 연결은 선택 사항이며, 검사 진행에는 영향을 주지 않습니다.</p><div class="options"><button onclick="talkCounselor()">💬 상담 NPC와 대화하기</button><button onclick="indoor=null;closeModal()">🚪 상담실 나가기</button></div>`);
+}
+function talkCounselor(){
+ modal(`<h2>🐻 상담 NPC</h2><p>안녕하세요! 진로 선택과 준비 과정이 궁금하시면 편하게 문의해 주세요.</p><p><strong>☎ 053-219-3683</strong></p><div class="options"><a onclick="statsEvent('phone')" href="tel:0532193683" style="display:block;text-align:center;padding:13px;background:#d8efd7;border:2px solid #304d41;border-radius:5px;color:#183e35;font-weight:800;text-decoration:none">📞 전화 걸기 · 053-219-3683</a><button onclick="showCounselorRoom()">↩ 상담실로 돌아가기</button><button onclick="indoor=null;closeModal()">🚪 맵으로 돌아가기</button></div><p class="hint">전화 기능은 통화를 지원하는 기기에서 이용할 수 있습니다.</p>`);
+}
+function showIndoor(){
+ if(!indoor)return;
+ modal(`<h2>🏠 ${escapeHtml(indoor.name)} · 실내 탐험</h2><p class="hint">방향 버튼으로 NPC(🧑‍🏫) 가까이 이동해 대화해 보세요. 이 실내 맵은 간단한 체험 공간입니다.</p><canvas id="indoorCanvas" width="320" height="224" style="max-width:440px;margin:auto"></canvas><div class="ctrl"><span></span><button onclick="indoorMove(0,-1)">▲</button><span></span><button onclick="indoorMove(-1,0)">◀</button><button onclick="indoorMove(0,1)">▼</button><button onclick="indoorMove(1,0)">▶</button></div><div class="options"><button onclick="talkNPC()">💬 NPC와 대화하기</button><button onclick="indoor=null;closeModal()">🚪 건물 밖으로 나가기</button></div>`);
+ drawIndoor();
+}
+function drawIndoor(){
+ const canvas=document.getElementById('indoorCanvas');if(!canvas||!indoor)return;
+ const c=canvas.getContext('2d'),t=32;
+ c.fillStyle='#514a63';c.fillRect(0,0,320,224);
+ for(let y=1;y<6;y++)for(let x=1;x<9;x++){c.fillStyle=(x+y)%2?'#e4cda8':'#f0dbb5';c.fillRect(x*t,y*t,t,t);c.strokeStyle='#b9a485';c.strokeRect(x*t,y*t,t,t)}
+ c.fillStyle='#9bb6cf';c.fillRect(64,0,64,32);c.fillStyle='#6b4c40';c.fillRect(224,32,64,32);
+ c.fillStyle='#946f4c';c.fillRect(64,80,64,32);c.fillRect(224,112,64,32);
+ c.fillStyle='#343d60';c.fillRect(76,83,34,22);c.fillStyle='#b4e0ec';c.fillRect(80,86,26,14);
+ c.font='26px sans-serif';c.fillText('🧑‍🏫',5*t+2,3*t-4);
+ c.fillText(gender==='남'?'🐕‍🦺':'🐩',indoor.x*t+1,indoor.y*t+27);
+ c.fillStyle='#ffffff';c.font='12px sans-serif';c.fillText('NPC',5*t+2,3*t+11);
+}
+function indoorMove(dx,dy){if(!indoor)return;indoor.x=Math.max(1,Math.min(8,indoor.x+dx));indoor.y=Math.max(1,Math.min(5,indoor.y+dy));drawIndoor();if(Math.abs(indoor.x-5)+Math.abs(indoor.y-2)<=1)talkNPC()}
+function talkNPC(){if(!indoor)return;const n=indoor.name,p=jobProfile(profileForBuilding(n));modal(`<h2>💬 ${escapeHtml(n)} 담당자</h2><p>어떤 정보가 궁금한가요?</p><div class="options"><button onclick="npcDetail('work')">1번 · 무슨 일을 하나요?</button><button onclick="npcDetail('prepare')">2번 · 어떻게 준비하나요?</button><button onclick="npcDetail('salary')">3번 · 수입은 어느 정도인가요?</button><button onclick="showIndoor()">↩ 실내로 돌아가기</button></div>`)}
+function npcDetail(type){if(!indoor)return;const n=indoor.name,p=jobProfile(profileForBuilding(n));let info=type==='work'?p.day:type==='prepare'?`관련 학과: ${p.major} / 준비: ${p.cert}`:salaryInfo(profileForBuilding(n));modal(`<h2>💬 ${escapeHtml(n)} 안내</h2><p>${escapeHtml(info)}</p><p class="hint">수입 숫자는 시연용 가상 예시입니다. 실제 준비 방법은 상담에서 확인하세요.</p><div class="options"><button onclick="talkNPC()">다른 질문하기</button><button onclick="showIndoor()">실내로 돌아가기</button><button onclick="indoor=null;closeModal()">밖으로 나가기</button></div>`)}
+function showCollection(){const awards=[[10,'🌱 진로 탐험가'],[20,'🔎 직업 연구원'],[30,'🧭 진로 개척자'],[40,'🏆 진로 마스터']];modal(`<h2>📖 나의 직업 도감</h2><p>방문한 건물 ${discovered.size}곳 · 전체 탐험 진행 ${idx}/40</p><h3>🏅 업적</h3>${awards.map(([n,label])=>`<span class="badge">${idx>=n?label:'🔒 '+n+'문항 달성'}</span>`).join('')}<h3>🏠 방문 기록</h3><p>${[...discovered].map(escapeHtml).join(' · ')||'아직 방문한 건물이 없습니다.'}</p><p class="hint">직업 도감은 건물을 방문할 때 하나씩 열립니다.</p><button onclick="closeModal()">돌아가기</button>`)}
+
+function locateSign(){if(idx>=TOTAL)return;modal(`<h2>🌀 포탈 안내</h2><p>${escapeHtml(currentZone())}의 포탈은 하나입니다.</p><p>위쪽 길을 따라 (8, 5)로 이동하세요.</p><button onclick="closeModal()">확인</button>`)}
+function draw(){let c=document.getElementById('world'),ctx=c.getContext('2d'),t=TILE;
+ctx.imageSmoothingEnabled=false;let ox=Math.max(0,Math.min(MW-15,pos.x-7)),oy=Math.max(0,Math.min(MH-11,pos.y-5));ctx.clearRect(0,0,480,352);
+for(let sy=0;sy<11;sy++)for(let sx=0;sx<15;sx++){let x=ox+sx,y=oy+sy,px=sx*t,py=sy*t,road=pathTile(x,y);ctx.fillStyle=road?((x+y)%2?'#d8c59c':'#e4d0a5'):(idx===0?((x+y)%2?'#98bf83':'#a4c88b'):themeColors[currentTheme()]||'#a4c88b');ctx.fillRect(px,py,t,t);if(!road){let n=(x*17+y*31)%13;if(n<3){ctx.fillStyle=({media:'#4652a1',tech:'#328fa1',safety:'#bf6759',design:'#ad65ad',business:'#b89444',public:'#6c95a5',education:'#b6a65d',machine:'#82745e','3d':'#8e6eb6',space:'#5f9260',office:'#9a885b'}[currentTheme()]||'#498456');ctx.fillRect(px+7,py+9,16,14);ctx.fillStyle='#356e47';ctx.fillRect(px+11,py+3,9,16);ctx.fillStyle='#6b4b31';ctx.fillRect(px+14,py+23,4,6)}else if(n===4){ctx.fillStyle='#f6e4a0';ctx.fillRect(px+9,py+14,4,4);ctx.fillRect(px+20,py+10,4,4)}}}
+// Crisp 8-bit decorative objects, drawn on the canvas instead of font emoji.
+function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),w,h)}
+function art(type,x,y){
+ const P=(a,b,w,h,c)=>rect(x+a,y+b,w,h,c);
+ if(type==='palette'){P(3,8,27,19,'#f2d39c');P(8,5,19,5,'#f2d39c');P(7,13,5,5,'#e75e6c');P(17,10,5,5,'#539ad2');P(23,17,5,5,'#e9b64d');P(11,22,7,4,'#65a96b')}
+ if(type==='painting'){P(3,2,26,29,'#7e4d31');P(6,5,20,23,'#f8ead1');P(8,9,16,8,'#7eacd0');P(8,17,16,9,'#a9ca7e');P(12,14,8,9,'#d6a16b');P(18,8,4,4,'#ffe88d')}
+ if(type==='brush'){P(7,23,19,4,'#8d5638');P(21,12,5,11,'#c3b5a0');P(19,5,9,8,'#a36aab');P(7,9,7,7,'#d98c56')}
+ if(type==='film'){P(3,7,26,20,'#2a3047');for(let i=0;i<4;i++){P(5+i*6,9,3,4,'#eee7c9');P(5+i*6,22,3,3,'#eee7c9')}P(11,14,11,7,'#6b89bd')}
+ if(type==='screen'){P(2,6,28,21,'#292f49');P(5,9,22,15,'#537ca3');P(12,12,10,9,'#f1d98b');P(13,25,7,4,'#777f91')}
+ if(type==='camera'){P(3,11,22,16,'#353b51');P(8,7,11,5,'#353b51');P(9,14,10,10,'#78b7c3');P(12,17,4,4,'#1c4966');P(25,14,5,9,'#566b82')}
+ if(type==='tower'){P(7,4,18,27,'#637f98');for(let yy=8;yy<27;yy+=7)for(let xx=10;xx<24;xx+=6)P(xx,yy,3,4,'#e6dfab');P(5,29,22,3,'#445e73')}
+ if(type==='helmet'){P(5,17,22,9,'#f2bf4b');P(9,11,14,9,'#f2bf4b');P(3,24,26,4,'#ab7b32');P(15,8,3,5,'#ffe4a0')}
+ if(type==='blueprint'){P(3,3,26,26,'#477c9e');for(let a=8;a<28;a+=5){P(a,6,1,20,'#7fa9c2');P(6,a,20,1,'#7fa9c2')}P(11,11,12,12,'#d8e9ed');P(14,14,6,6,'#477c9e')}
+ if(type==='books'){for(let i=0;i<4;i++)P(5+i*6,7+i%2*4,5,22-i%2*4,['#c45d54','#d3a65a','#5b9b86','#6c7cb7'][i])}
+ if(type==='badge'){P(10,4,12,19,'#dfb757');P(6,20,20,8,'#c9924d');P(13,10,6,7,'#fff0bf')}
+ if(type==='gear'){P(9,6,14,21,'#c2c5c7');P(5,12,22,9,'#c2c5c7');P(13,13,6,7,'#687884')}
+ if(type==='computer'){P(3,5,26,19,'#344d67');P(6,8,20,13,'#6ac5b8');P(12,24,8,4,'#a2a6b0');P(7,28,18,3,'#657583')}
+ if(type==='plant'){P(13,17,6,12,'#8e6548');P(6,10,11,11,'#57976e');P(16,5,11,13,'#77ae76');P(8,25,17,5,'#bc8b65')}
+ if(type==='light'){P(10,5,13,15,'#ffe19a');P(14,19,5,8,'#b5a17b');P(12,27,9,3,'#5c6372')}
+ if(type==='chart'){P(4,5,25,25,'#eee7d6');P(8,21,5,6,'#7eacc4');P(15,15,5,12,'#84ba95');P(22,9,5,18,'#d8a461')}
+ if(type==='cube'){P(6,8,20,19,'#8164ad');P(6,8,10,9,'#b1a1d6');P(16,8,10,9,'#6c4b9e');P(10,27,12,3,'#44355f')}
+ if(type==='star'){P(14,4,5,24,'#e9d277');P(5,13,23,5,'#e9d277');P(9,8,15,15,'#f5e8a3')}
+}
+const decor={design:['palette','painting','brush'],media:['film','screen','camera'],space:['tower','helmet','blueprint'],tech:['computer','gear','chart'],machine:['gear','blueprint','helmet'],education:['books','painting','plant'],public:['tower','badge','books'],safety:['helmet','badge','tower'],business:['light','chart','computer'],office:['chart','computer','books'],'3d':['cube','computer','star'],start:['plant','star','books']};
+for(let [kind,gx,gy] of (decor[idx===0?'start':currentTheme()]||decor.start).map((k,i)=>[k,[[5,4],[11,10],[18,6]][i][0],[[5,4],[11,10],[18,6]][i][1]])){let sx=(gx-ox)*t,sy=(gy-oy)*t;if(sx<0||sx>448||sy<26||sy>320)continue;art(kind,sx,sy)}
+for(let b of getLandmarks()){
+ let sx=(b.x-ox)*t,sy=(b.y-oy)*t,theme=currentTheme(),w=b.w*t,h=b.h*t;
+ if(sx>480||sy>352||sx+w<0||sy+h<0)continue;
+ const R=(x,y,ww,hh,c)=>rect(sx+x,sy+y,ww,hh,c);
+ const win=(x,y,ww=19,hh=19)=>{R(x,y,ww,hh,'#263d52');R(x+3,y+3,ww-6,hh-6,'#8dd1df');R(x+ww/2-1,y,2,hh,'#e7e9e0')};
+ // Every district has a different architectural silhouette, not just a recolored facade.
+ if(theme==='design'){
+  R(7,36,w-14,h-40,'#f8cfe4');R(0,30,w,16,'#8d60b7');R(12,16,w-24,16,'#b9a0df');R(22,5,w-44,12,'#e7c5ed');
+  R(14,60,34,49,'#fff6ed');R(18,65,26,36,'#cbb2e5');R(24,73,13,12,'#f7a4a2');R(w-50,56,36,50,'#fff5e5');
+  for(let i=0;i<4;i++)R(w-46+i*8,67,6,13,['#ee6980','#f6bf59','#5eacb6','#a77ec9'][i]);
+ }else if(theme==='media'){
+  R(12,28,w-24,h-34,'#283451');R(0,45,w,13,'#131d35');R(20,8,w-40,25,'#425d85');R(29,2,9,15,'#bdc6d7');R(w-37,2,9,15,'#bdc6d7');
+  R(23,65,w-46,49,'#101e37');R(28,70,w-56,39,'#597ea5');R(w/2-15,77,30,24,'#f0d58b');R(w/2-4,83,13,13,'#253f5d');
+  for(let i=0;i<5;i++)R(12+i*26,39,12,6,'#efcf7d');
+ }else if(theme==='space'){
+  R(12,25,42,h-30,'#a7b8b5');R(54,2,42,h-7,'#7e9eab');R(96,38,w-109,h-43,'#c5c0a9');
+  for(let i=0;i<4;i++)for(let j=0;j<3;j++){R(18+j*12,36+i*25,7,14,'#c6e9f1');R(60+j*12,14+i*25,7,14,'#bce3f1')}
+  R(108,54,24,14,'#f0d67a');R(103,48,35,5,'#f3b65a');
+ }else if(theme==='safety'){
+  R(6,34,w-12,h-40,'#f4e6d6');R(0,24,w,16,'#b52d38');R(17,9,21,16,'#f1c653');R(20,3,15,8,'#d94c42');
+  R(18,64,41,67,'#c64545');R(24,70,29,59,'#6d7785');R(70,63,40,67,'#c64545');R(76,70,28,59,'#6d7785');
+  R(w-42,56,27,24,'#b4d7e8');
+ }else if(theme==='education'){
+  R(9,45,w-18,h-50,'#f3d9a2');R(0,36,w,15,'#b66e48');R(15,24,w-30,14,'#d89b65');R(w/2-13,4,26,30,'#f6e9cc');R(w/2-3,9,6,18,'#a36b43');
+  for(let i=0;i<3;i++)win(18+i*46,63,25,24);
+ }else if(theme==='machine'){
+  R(0,52,w,h-56,'#7d8488');R(0,35,42,24,'#59626a');R(43,19,40,40,'#59626a');R(84,40,w-84,19,'#59626a');R(w-37,0,20,52,'#a4afb0');
+  for(let i=0;i<4;i++){R(12+i*35,75,23,28,'#c1a977');R(16+i*35,79,15,18,'#56777d')}
+ }else if(theme==='tech'){
+  R(14,14,w-28,h-20,'#19354b');R(22,3,w-44,16,'#35778b');R(4,45,16,h-51,'#27637b');R(w-20,45,16,h-51,'#27637b');
+  for(let i=0;i<4;i++)for(let j=0;j<3;j++)R(31+j*33,29+i*24,18,13,'#58b4c2');
+ }else if(theme==='3d'){
+  R(7,49,w-14,h-54,'#40366d');R(23,19,w-46,35,'#6e53a5');R(42,1,w-84,20,'#a77bcd');
+  R(29,65,w-58,51,'#29244c');R(w/2-26,72,52,40,'#a68cde');R(w/2-16,78,32,27,'#4e4087');
+ }else if(theme==='public'){
+  R(9,55,w-18,h-61,'#d5dce0');R(0,42,w,18,'#758c9e');R(12,24,w-24,18,'#a7b9c7');R(30,9,w-60,14,'#d4e0e5');
+  for(let i=0;i<5;i++){R(15+i*27,62,12,65,'#eef1e8');R(15+i*27,62,12,7,'#71869a')}
+ }else if(theme==='business'){
+  R(12,37,w-24,h-43,'#dfb77a');R(0,25,w,17,'#8b5d39');R(21,9,w-42,17,'#f0d994');R(18,56,w-36,57,'#f8e9c4');
+  R(w/2-28,65,56,39,'#9ec9bb');R(w/2-14,72,28,25,'#e4a951');
+ }else if(theme==='office'){
+  R(12,18,w-24,h-23,'#c9c4b7');R(0,40,w,14,'#80796c');for(let i=0;i<3;i++)for(let j=0;j<4;j++)win(21+j*30,59+i*24,19,16);
+ }else{
+  R(8,44,w-16,h-49,'#e7d4a8');R(0,27,w,22,'#a65e42');R(20,10,w-40,18,'#db9565');win(25,65,24,25);win(w-50,65,24,25);
+ }
+ R(w/2-14,h-39,28,39,'#e6c78a');R(w/2-11,h-35,22,35,theme==='tech'?'#091b31':'#5e5049');R(w/2+5,h-19,3,3,'#f6da73');
+ ctx.font='bold 11px sans-serif';ctx.fillStyle=['tech','media','3d'].includes(theme)?'#f5f4ef':'#2b3437';ctx.fillText(b.name,sx+12,sy+Math.min(h-43,56));
+}
+if(idx<TOTAL){for(let pg of getPortals()){let gx=(pg.x-ox)*t,gy=(pg.y-oy)*t;if(gx>=0&&gx<480&&gy>=0&&gy<352){let pulse=(Date.now()/300|0)%2;ctx.fillStyle='#28327d';ctx.fillRect(gx+2,gy+2,28,29);ctx.fillStyle=pulse?'#64e9ff':'#a28aff';ctx.fillRect(gx+6,gy+4,20,25);ctx.fillStyle='#e4ffff';ctx.fillRect(gx+11,gy+9,10,15);ctx.fillStyle='#1b3965';ctx.fillRect(gx+13,gy+13,6,9);ctx.font='bold 10px sans-serif';ctx.fillStyle='#ffffff';ctx.fillText(portalNames[pg.key],gx,gy-3)}}}
+let px=(pos.x-ox)*t,py=(pos.y-oy)*t;// Pixel dogs: Doberman for male, poodle for female.
+let dog=gender==='남',fur=dog?'#181b21':'#f9f9f5',ear=dog?'#11151a':'#e6e5e0';
+ctx.fillStyle='#24332c';ctx.fillRect(px+6,py+29,23,2);
+ctx.fillStyle=fur;ctx.fillRect(px+7,py+15,20,12);ctx.fillRect(px+11,py+7,15,13);
+ctx.fillStyle=ear;ctx.fillRect(px+9,py+(dog?1:6),5,11);ctx.fillRect(px+23,py+(dog?1:6),5,11);
+ctx.fillStyle=fur;ctx.fillRect(px+6,py+24,5,6);ctx.fillRect(px+22,py+24,5,6);
+ctx.fillStyle=dog?'#303640':'#ffffff';ctx.fillRect(px+15,py+16,8,6);
+ctx.fillStyle='#1c2221';ctx.fillRect(px+14,py+12,3,3);ctx.fillRect(px+23,py+12,3,3);ctx.fillRect(px+20,py+19,3,3);
+if(!dog){ctx.fillStyle='#ffffff';ctx.fillRect(px+8,py+6,7,6);ctx.fillRect(px+19,py+5,8,7);ctx.fillRect(px+8,py+20,5,5)}
+ctx.fillStyle='#213d30';ctx.fillRect(0,0,480,24);ctx.fillStyle='#fff9df';ctx.font='bold 13px sans-serif';ctx.fillText(`${currentZone()} · 탐험 ${idx+1}/${TOTAL}`,10,17);document.getElementById('zone').textContent=`📍 현재 (${pos.x}, ${pos.y}) · 포탈 1개 · 질문에 답하면 다음 마을 · 완료 ${idx}/${TOTAL}`}
+function move(dx,dy){
+ if(document.getElementById('play').classList.contains('hidden')||kicked||!document.getElementById('modal').classList.contains('hidden'))return;
+ let x=pos.x+dx,y=pos.y+dy;if(blocked(x,y))return;
+ pos={x,y};draw();if(idx<TOTAL){let pg=getPortals().find(p=>p.x===x&&p.y===y);if(pg){selectedPortal=pg;showQuestion()}}
+}
+document.addEventListener('keydown',e=>{if(document.getElementById('modal').classList.contains('hidden')&&!document.getElementById('play').classList.contains('hidden')){let k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(k){e.preventDefault();move(...k)}else if(e.key==='e'||e.key==='E'||e.key==='Enter'){e.preventDefault();visitBuilding()}}});
+function showQuestion(){if(kicked||idx>=TOTAL||!selectedPortal)return;let q=currentQuestion();modal(`<h2>🌀 ${portalNames[selectedPortal.key]}의 길 · 진로 질문 ${idx+1} / ${TOTAL}</h2><p><strong>${escapeHtml(q[0])}</strong></p><div class="options">${q[1].map((o,i)=>`<button onclick="answer(${i})">${i+1}번 · ${escapeHtml(o[0])}</button>`).join('')}</div><p class="hint" style="font-size:11px;margin-top:16px">10문항마다 결과 조회 가능합니다.<br>끝까지 하는 것이 진로 선택에 더 도움이 됩니다.</p>`)}
+function answer(i){if(idx>=TOTAL)return;let q=currentQuestion(),a=q[1][i];if(!a)return;answers.push({label:a[0],key:a[1],question:q[0]});route.push(a[1]);selectedPortal=null;scores[a[1]]=(scores[a[1]]||0)+1;idx++;closeModal();if(idx>=TOTAL){finish();return}pos={x:4,y:8};update();if(idx%10===0){showCheckpoint();return}modal(`<h2>🌀 새로운 마을 발견!</h2><p>선택한 길: <strong>${escapeHtml(a[0])}</strong></p><p>🏘️ <strong>${escapeHtml(currentZone())}</strong>에 도착했어요.</p><p>이 마을의 포탈을 찾아 다음 질문에 답해보세요.</p><button onclick="closeModal()">탐험 계속 ▶</button>`)}
+function showCheckpoint(){if(!trackedMilestones.has(idx)){trackedMilestones.add(idx);milestoneSnapshots.push({at:idx,values:{...scores}});statsEvent('checkpoint'+idx)}modal(`<h2>🌟 ${idx}문항 완료!</h2><p>지금까지의 답변으로 진로 결과를 확인할 수 있어요.</p><p class="hint">40문항까지 완료하면 더 다양한 응답을 바탕으로 결과를 살펴볼 수 있습니다.</p><div class="options"><button onclick="finish(true)">🏆 지금까지의 답변으로 진로 결과보기</button><button onclick="resumeCheckpoint()">🌀 계속 탐험하기 (${idx}/${TOTAL})</button></div>`)}
+function resumeCheckpoint(){modal(`<h2>🏘️ 다음 마을 도착!</h2><p>${escapeHtml(currentZone())}에 도착했어요.</p><p>포탈을 찾아 다음 질문에 답하세요.</p><button onclick="closeModal()">탐험 계속 ▶</button>`)}
+
+const learningPaths={
+ education:['교육학 기초 및 교수법','수업안 설계·모의수업','학습자 상담과 교육 콘텐츠 제작'],
+ public:['행정학·법령 및 공공서비스 이해','문서 작성·엑셀·컴퓨터활용능력','해당 직렬 시험 과목 및 채용 전형 준비'],
+ safety:['체력 관리 및 응급처치 기초','안전 법규·현장 대응 이해','경찰·소방 등 해당 채용 전형과 실기 준비'],
+ business:['고객 문제 발견과 시장 조사','사업계획서·비즈니스 모델 실습','마케팅·회계·MVP 검증'],
+ office:['엑셀·문서작성·컴퓨터활용능력','회계·데이터 관리 및 협업 도구','실무 보고서와 업무 자동화 실습'],
+ tech:['프로그래밍·데이터 기초','웹 개발·데이터 분석·AI 도구 실습','프로젝트 및 포트폴리오 제작'],
+ design:['포토샵·일러스트·피그마','시각 디자인 원리 및 UX/UI','브랜드·웹 디자인 포트폴리오'],
+ media:['영상 기획·스토리보드','프리미어 프로·애프터 이펙트','촬영·편집·영상 포트폴리오'],
+ '3d':['블렌더·마야·시네마4D','모델링·텍스처·라이팅·렌더링','3D/CG 쇼릴 및 작품집'],
+ space:['캐드·스케치업·레빗(BIM)','공간 구성·도면·모델링','설계 프로젝트와 포트폴리오'],
+ machine:['기계제도·캐드·인벤터','공정·재료·품질·안전 기초','설계·제작 실습 및 관련 자격 준비']
+};
+const jobSpecific={
+ '초등학교 교사':'초등 교육과 학생 지도에 관심을 보인 응답과 연결되는 직무입니다.',
+ '중·고등학교 교사':'교과 지식 전달과 청소년 교육에 흥미가 있는 경우 탐색할 만합니다.',
+ '경찰관':'치안·범죄 예방과 시민 보호에 관심을 보인 응답과 연결됩니다.',
+ '소방관':'긴급 대응과 구조·안전 업무에 흥미가 있는 경우 탐색할 만합니다.',
+ '웹디자이너':'시각적 표현과 웹 화면 제작을 결합하는 직무입니다.',
+ '영상편집자':'촬영한 영상을 구성하고 완성하는 작업에 관심이 있는 경우 탐색할 만합니다.',
+ '방송 PD':'콘텐츠 기획과 제작팀 조율에 관심이 있는 경우 탐색할 만합니다.',
+ '건축설계 전문가':'공간을 구상하고 도면으로 구현하는 업무에 연결됩니다.',
+ '스타트업 창업자':'새로운 문제를 발견하고 사업으로 검증하는 과정에 관심이 있는 경우 탐색할 만합니다.'
+};
+const fieldReasons={education:'가르치고 성장을 돕는 활동',public:'공공서비스와 체계적인 행정 업무',safety:'사람을 보호하고 현장 문제에 대응하는 활동',business:'새로운 아이디어와 사업 운영',office:'기획·정리·협업과 업무 관리',tech:'논리적 문제 해결과 디지털 기술',design:'시각 표현과 창의적 제작',media:'이야기 구성과 영상 콘텐츠 제작','3d':'입체 모델과 시각효과 제작',space:'공간과 구조를 설계하는 활동',machine:'기계·설비·제조 기술'};
+// V16: 간략 직업 안내. 연봉은 실제 조사값이 아닌 UI용 예시 범위입니다.
+const fieldProfiles={
+ education:{day:'수업을 준비하고 학습자의 성장을 돕습니다.',major:'교육학·교과교육 관련 학과',cert:'교원자격 등 직종별 필수 자격 확인',salary:[3000,4200,4300,7000]},
+ public:{day:'민원·정책·행정 자료를 처리합니다.',major:'행정학·법학·사회복지학 등',cert:'직렬별 공무원 채용시험',salary:null},
+ safety:{day:'시민 안전을 위한 예방·대응 업무를 합니다.',major:'경찰행정·소방방재·응급구조 등',cert:'직렬별 채용시험·체력/자격 요건',salary:null},
+ business:{day:'고객 문제를 찾고 사업을 운영합니다.',major:'경영학·창업학·전공 무관',cert:'필수 자격 없음(업종별 인허가 확인)',salary:null},
+ office:{day:'자료와 일정을 관리하고 조직 업무를 지원합니다.',major:'경영·행정·회계 관련 학과',cert:'컴퓨터활용능력·전산회계 등',salary:[2800,3900,4000,6500]},
+ tech:{day:'데이터와 소프트웨어로 문제를 해결합니다.',major:'컴퓨터공학·통계·정보보호 등',cert:'정보처리기사·SQLD 등(직무별)',salary:[3200,4800,5000,9000]},
+ design:{day:'사용자와 브랜드에 맞는 시각물을 제작합니다.',major:'시각디자인·디지털미디어 등',cert:'GTQ 등(필수 아님)',salary:[2600,3800,3800,6500]},
+ media:{day:'콘텐츠를 기획하고 촬영·편집·제작합니다.',major:'영상·방송·미디어 관련 학과',cert:'관련 자격보다 작품·경험 중심',salary:[2600,3900,4000,7500]},
+ '3d':{day:'3D 모델과 영상·게임 시각효과를 만듭니다.',major:'애니메이션·게임·영상 관련 학과',cert:'포트폴리오 중심(필수 자격 없음)',salary:[2700,4000,4300,8000]},
+ space:{day:'도면과 모델로 건물·공간을 설계합니다.',major:'건축·실내건축·공간디자인 등',cert:'건축기사·실내건축기사 등(응시요건 확인)',salary:[2800,4200,4500,8000]},
+ machine:{day:'제품·설비를 설계하고 공정 품질을 점검합니다.',major:'기계·전기·반도체 관련 학과',cert:'기계설계·전기 관련 자격(직무별)',salary:[3000,4700,4700,8500]}
+};
+const jobProfileOverrides={
+ '초등학교 교사':{cert:'초등 정교사 자격 및 임용·채용 절차'},
+ '중·고등학교 교사':{cert:'해당 교과 정교사 자격 및 임용·채용 절차'},
+ '유치원 교사':{cert:'유치원 정교사 자격'},
+ '직업훈련 강사':{cert:'분야별 직업능력개발훈련교사 자격 등 확인'},
+ '경찰관':{day:'치안 활동, 신고 대응, 사건 예방 업무를 수행합니다.'},
+ '소방관':{day:'화재 예방, 구조·구급, 재난 대응을 수행합니다.'},
+ '응급구조사':{cert:'응급구조사 국가자격(등급별 요건)'},
+ '건축설계 전문가':{cert:'건축사 자격은 별도 실무·시험 요건 필요'},
+ '반도체 생산·공정 기술자':{day:'반도체 공정·장비와 생산 품질을 관리합니다.'},
+ '스타트업 창업자':{day:'아이디어를 검증하고 고객·제품·팀을 운영합니다.'},
+ '소상공인 창업자':{day:'매장·서비스 운영과 고객 응대, 비용을 관리합니다.'},
+ '방송작가':{day:'프로그램 구성안과 대본을 작성합니다.'}
+};
+function jobProfile(job){const [name,key]=job;return {...(fieldProfiles[key]||fieldProfiles.office),...(jobProfileOverrides[name]||{})}}
+// Job-specific fictional illustration ranges; NOT official salary statistics.
+const salaryExamples={
+ '사무행정 전문가':[2700,3500,3800,5700],'인사·총무 담당자':[2800,3800,4300,6800],'회계·재무 담당자':[2900,4100,4800,7800],
+ '데이터 분석가':[3300,4700,5400,9500],'웹디자이너':[2600,3500,3900,6500],'UX/UI 디자이너':[2900,4200,4700,8300],
+ '그래픽 디자이너':[2500,3500,3700,6200],'브랜드 디자이너':[2700,3900,4200,7600],
+ '영상기획자':[2700,3800,4300,7500],'영상편집자':[2500,3700,3900,6800],'방송 PD':[2900,4400,4800,9000],
+ '모션그래픽 디자이너':[2700,4000,4400,8000],'CG·VFX 아티스트':[2800,4200,4800,9000],
+ '3D 모델러':[2600,3900,4200,7700],'게임 아티스트':[2800,4200,4700,8800],
+ '인테리어 디자이너':[2700,3900,4300,7500],'가구 디자이너·제작자':[2500,3600,3700,6500],
+ '건축설계 전문가':[3000,4300,4900,8500],'BIM 모델러':[2900,4300,4800,8300],
+ '기계설계·제작자':[2900,4200,4600,8000],'제품 설계 엔지니어':[3100,4600,5100,9000],
+ '반도체 생산·공정 기술자':[3200,5100,5300,10500],'자동화 설비 기술자':[3000,4600,4900,8800],
+ '웹 개발자':[3100,4600,5000,9500],'AI 서비스 기획자':[3200,4800,5300,10000],
+ '마케팅 기획자':[2800,4000,4400,7900],'직업훈련 강사':[2600,3800,4000,6900],
+ '교육 콘텐츠 기획자':[2700,3900,4200,7400],'재난안전 담당자':[2800,4100,4300,7500],
+ '응급구조사':[2700,3900,4000,6500],'사업개발 담당자':[3000,4500,5000,9200],
+ '경영 컨설턴트':[3200,4900,5600,10500]
+};
+function salaryInfo(job){const [name,key]=job;
+ if(key==='business'&&/창업자/.test(name))return '창업 초기에는 적자·무급도 가능하며, 매출·비용·사업 단계에 따라 수입이 크게 달라집니다.';
+ if(key==='public'||name==='경찰관'||name==='소방관'||/교사/.test(name))return '공무원·교원은 직급·호봉·수당에 따라 달라집니다. 공식 보수표를 확인해 주세요.';
+ if(name==='콘텐츠 크리에이터'||name==='방송작가')return '프리랜서·프로젝트·계약 형태에 따라 수입 차이가 커 일률적인 연봉 제시가 어렵습니다.';
+ const r=salaryExamples[name];if(!r)return '직무·계약·근무 형태에 따라 차이가 큽니다. 실제 채용공고를 확인해 주세요.';
+ const [a,b,c,d]=r;return `신입 연 ${a.toLocaleString('ko-KR')}~${b.toLocaleString('ko-KR')}만 원 / 10년 차 연 ${c.toLocaleString('ko-KR')}~${d.toLocaleString('ko-KR')}만 원 (통계가 아닌 시연용 예시)`;
+}
+function shortJobGuide(job){const p=jobProfile(job);return `<p><strong>🧑‍💼 하는 일</strong> ${escapeHtml(p.day)}</p><p><strong>🎓 관련 학과</strong> ${escapeHtml(p.major)}</p><p><strong>📜 자격·준비</strong> ${escapeHtml(p.cert)}</p><p><strong>💰 수입 참고</strong> ${escapeHtml(salaryInfo(job))}</p>`}
+function profileForBuilding(building){const n=building;const key=/학교|교육|도서관|학습/.test(n)?'education':/경찰|소방|안전|구조/.test(n)?'safety':/행정|시청|민원|공공/.test(n)?'public':/창업|스타트업|공유/.test(n)?'business':/건축|가구|인테리어|공간/.test(n)?'space':/기계|반도체|공장|생산|제조/.test(n)?'machine':/영상|촬영|방송|편집/.test(n)?'media':/게임|CG|3D|모델링/.test(n)?'3d':/디자인|브랜드|아틀리에/.test(n)?'design':/코딩|AI|데이터|연구/.test(n)?'tech':'office';const matches=careers.filter(j=>j[1]===key);const names=(landmarkSets[key]||[]).map(x=>x[0]);const which=names.indexOf(n);return matches[Math.max(0,which)%matches.length]||careers[0]}
+function jobExplanation(job){const [name,key]=job;const related=answers.filter(a=>a.key===key).length;const why=jobSpecific[name]||`${fieldReasons[key]||'해당 분야의 활동'}에 대한 관심을 탐색할 수 있는 직무입니다.`;return `지금까지 ${related}개 답변에서 관련 분야를 선택했습니다. ${why} 같은 분야의 직업은 점수가 비슷하게 나올 수 있으므로 직접 체험해 비교해 보세요.`}
+function jobCard(job,i){const [name,key]=job;const steps=learningPaths[key]||[];return `<div class="card" style="margin:12px 0;padding:14px;box-shadow:none"><h3 style="margin:0 0 8px">${i+1}위 · ${escapeHtml(name)}</h3><p><strong>💡 추천 이유</strong><br>${escapeHtml(jobExplanation(job))}</p>${shortJobGuide(job)}<p><strong>📚 시작하기 좋은 학습</strong> ${steps.slice(0,2).map(escapeHtml).join(' · ')}</p><p class="hint">연봉 숫자는 통계 기반 직업별 실측치가 아닌 <strong>화면 시연용 가상 예시 범위</strong>입니다. 실제 보수는 기업·지역·근무형태·경력에 따라 다릅니다. <a href="https://wagework.go.kr/" target="_blank" rel="noopener noreferrer">공식 임금정보 확인</a></p></div>`}
+function finish(early=false){if(!early&&!trackedFinish){trackedFinish=true;statsEvent('finish')}window.previewResult=early;document.getElementById('play').classList.add('hidden');document.getElementById('result').classList.remove('hidden');let sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);let order=sorted.map(x=>x[0]);let recommended=careers.filter(c=>c[1]===order[0]).slice(0,3);for(let key of order.slice(1)){if(recommended.length>=5)break;recommended.push(...careers.filter(c=>c[1]===key).slice(0,2))}lastRecommended=recommended.slice(0,5);document.getElementById('resultIntro').textContent=`${name}님 (${age}세 · ${occupation})의 목표는 ${goalNames[goal]}입니다. ${answers.length}/${TOTAL}개 문항에 응답했습니다. ${early?'중간 결과이므로 계속 탐험하면 추천이 달라질 수 있습니다.':'전체 문항을 완료했습니다.'}`;document.getElementById('resultList').innerHTML=(early?'<button onclick="continueAfterResult()">🌀 다음 질문으로 계속하기 ('+(idx+1)+'/40)</button><p class="hint">지금까지의 응답은 유지됩니다. 다음 마을 포탈에서 이어서 진행하세요.</p>':'')+'<h3>⭐ 추천 직업 TOP 5</h3>'+recommended.slice(0,5).map((c,i)=>jobCard(c,i)).join('')+'<h3>🗺️ 나의 탐험 경로</h3><p>'+route.map(k=>escapeHtml(themeZones[k]||k)).join(' → ')+'</p><h3>📊 관심 분야</h3>'+sorted.map(([k,v])=>`<p>${{office:'사무·경영',tech:'IT·데이터',design:'디자인',media:'영상·방송','3d':'3D·CG',space:'건축·공간',machine:'기계·제조',education:'교육·교직',public:'공공행정',safety:'경찰·소방·안전',business:'창업·경영'}[k]}: ${v}회</p>`).join('')}
+function renderTrend(){const names={office:'사무',tech:'IT',design:'디자인',media:'영상','3d':'3D',space:'건축',machine:'기계',education:'교육',public:'행정',safety:'안전',business:'창업'};const rows=[...milestoneSnapshots,{at:idx,values:{...scores}}].filter((x,i,a)=>i===0||x.at!==a[i-1].at);return `<p class="hint">10문항 단위로 관심 분야의 선택 횟수를 비교합니다.</p>${rows.map(s=>{let top=Object.entries(s.values).sort((a,b)=>b[1]-a[1]).slice(0,3);return `<div class="questbox"><strong>${s.at}문항</strong> · ${top.map(([k,v])=>`${names[k]||k} ${v}회`).join(' / ')||'기록 없음'}</div>`}).join('')}`}
+function consultSuggestion(){const top=lastRecommended[0];if(!top)return '';const subject=top[0];return `<p>현재 추천 1위는 <strong>${escapeHtml(subject)}</strong>입니다. 관심 분야에 맞는 교육과 진로 상담을 받아보세요.</p><a href="https://open.kakao.com/o/s8OkYLKi" target="_blank" rel="noopener noreferrer" onclick="statsEvent('consult')">💬 ${escapeHtml(subject)} 관련 1:1 상담 연결</a><p class="hint">실제 개설 과정과 지원 가능 여부는 상담에서 확인해 주세요.</p>`}
+function drawShareCard(){const c=document.getElementById('shareCanvas'),g=c.getContext('2d');g.fillStyle='#e7f1dc';g.fillRect(0,0,720,900);g.fillStyle='#254b3b';g.fillRect(32,32,656,836);g.fillStyle='#fff8e7';g.fillRect(48,48,624,804);g.textAlign='center';g.fillStyle='#264c3b';g.font='bold 34px sans-serif';g.fillText('🌿 진로 탐험 결과 카드',360,125);g.font='bold 28px sans-serif';g.fillText((name||'탐험가').slice(0,12)+' 님',360,200);g.font='22px sans-serif';g.fillText(`${idx}/40문항 완료 · ${goalNames[goal]}`,360,246);g.font='bold 26px sans-serif';g.fillText('나의 추천 직업 TOP 3',360,326);lastRecommended.slice(0,3).forEach((j,i)=>{g.fillStyle=i===0?'#d7eac4':'#ecf1e6';g.fillRect(92,360+i*102,536,80);g.fillStyle='#234836';g.font='bold 27px sans-serif';g.fillText(`${i+1}위  ${j[0]}`,360,410+i*102)});g.font='19px sans-serif';g.fillText('진로 흥미 탐색용 · 확정적인 적성 판정이 아닙니다.',360,735);g.fillText('나의 진로 탐험 RPG',360,780);return c}
+function saveResultCard(){if(!lastRecommended.length)return;const a=document.createElement('a');a.href=drawShareCard().toDataURL('image/png');a.download='career-result.png';a.click()}
+async function shareResult(){if(!lastRecommended.length)return;const msg=`진로 탐험 ${idx}/40문항 완료! 추천 직업: ${lastRecommended.slice(0,3).map(j=>j[0]).join(', ')} (흥미 탐색용)`;try{if(navigator.share)await navigator.share({title:'나의 진로 탐험 결과',text:msg});else if(navigator.clipboard){await navigator.clipboard.writeText(msg);alert('공유할 결과 문구를 복사했어요.')}else{saveResultCard()}}catch(e){if(e.name!=='AbortError')saveResultCard()}}
+function continueAfterResult(){
+ if(idx>=TOTAL)return;
+ window.previewResult=false;
+ document.getElementById('result').classList.add('hidden');
+ document.getElementById('play').classList.remove('hidden');
+ selectedPortal=null;
+ pos={x:4,y:8};
+ closeModal();update();
+ modal(`<h2>🌀 ${idx+1}번 질문으로 이어서 진행!</h2><p>응답 ${idx}개를 보존했어요. ${escapeHtml(currentZone())}의 포탈로 이동해 주세요.</p><button onclick="closeModal()">마을 탐험하기 ▶</button>`);
+}
+function restart(){document.getElementById('result').classList.add('hidden');document.getElementById('setup').classList.remove('hidden')}
+function modal(html){document.getElementById('modalBody').innerHTML=html;document.getElementById('modal').classList.remove('hidden','minimized');document.getElementById('resumeDialog').classList.add('hidden')}function closeModal(){document.getElementById('modal').classList.add('hidden');document.getElementById('modal').classList.remove('minimized');document.getElementById('resumeDialog').classList.add('hidden')}function minimizeModal(){let m=document.getElementById('modal');if(m.classList.contains('hidden'))return;m.classList.add('minimized');document.getElementById('resumeDialog').classList.remove('hidden')}function restoreModal(){document.getElementById('modal').classList.remove('minimized');document.getElementById('resumeDialog').classList.add('hidden')}
+function openAdmin(){if(adminPoll){clearInterval(adminPoll);adminPoll=null}modal(`<h2>⚙ 운영자 로그인</h2><p class="hint">서버를 통해 실행하면 여러 기기의 익명 집계를 확인할 수 있습니다. 비밀번호는 서버에서 확인합니다. HTML 파일만 열면 운영자 통계는 제공되지 않습니다.</p><input id="pin" type="password" autocomplete="current-password" placeholder="관리자 비밀번호"><p id="pinError" role="alert" style="color:#a33"></p><button onclick="loginAdmin()">로그인</button> <button onclick="closeModal()">닫기</button>`)}
+async function loginAdmin(){const pin=document.getElementById('pin').value;const err=document.getElementById('pinError');try{const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pin})});const d=await r.json();if(!r.ok){err.textContent=d.error||'로그인 실패';return}await adminPanel()}catch(e){err.textContent='서버에 연결할 수 없습니다. 서버 실행 안내를 확인하세요.'}}
+async function adminPanel(){try{const r=await fetch('/api/admin/stats',{cache:'no-store'});if(!r.ok)throw Error('인증이 만료되었거나 서버 연결이 끊겼습니다.');const s=await r.json();let checkpoints=s.checkpoints||{},goalRows=Object.entries(s.goals||{}).map(([g,n])=>`<p>${escapeHtml(g)}: ${n}회</p>`).join('')||'아직 기록 없음';modal(`<h2>🛡 운영자 실시간 통계</h2><p class="hint">서버에 저장된 모든 접속 기기의 익명 집계 · 10초마다 갱신</p><div class="card" style="box-shadow:none"><h3>📊 이용 통계</h3><p>검사 시작: <strong>${s.started||0}회</strong> · 40문항 완료: <strong>${s.finished||0}회</strong></p><p>10문항: ${checkpoints[10]||0}회 · 20문항: ${checkpoints[20]||0}회 · 30문항: ${checkpoints[30]||0}회</p><p>카카오톡 상담 클릭: ${s.consultClicks||0}회 · 홈페이지 클릭: ${s.schoolClicks||0}회 · 전화 클릭: ${s.phoneClicks||0}회</p><h4>목표 선택 분포</h4>${goalRows}<p class="hint">클릭은 실제 상담 신청이나 통화 완료를 뜻하지 않습니다. 개인별 신상 정보는 서버에 저장하지 않습니다.</p><button onclick="adminPanel()">🔄 새로고침</button> <button onclick="logoutAdmin()">로그아웃</button> <button onclick="closeModal()">닫기</button></div>`);if(adminPoll)clearInterval(adminPoll);adminPoll=setInterval(()=>{if(!document.getElementById('modal').classList.contains('hidden')&&document.getElementById('modalBody').textContent.includes('운영자 실시간 통계'))adminPanel();else{clearInterval(adminPoll);adminPoll=null}},10000)}catch(e){modal(`<h2>운영자 통계 오류</h2><p>${escapeHtml(e.message)}</p><button onclick="openAdmin()">다시 로그인</button>`)} }
+async function logoutAdmin(){if(adminPoll)clearInterval(adminPoll);adminPoll=null;try{await fetch('/api/admin/logout',{method:'POST'})}catch{}closeModal()}
+function warn(){warnings++;if(warnings>=2){kick(true);return}adminPanel()}function kick(auto=false){kicked=true;document.getElementById('play').classList.add('hidden');document.getElementById('result').classList.add('hidden');document.getElementById('setup').classList.remove('hidden');modal(`<h2>⛔ 참가 종료</h2><p>${auto?'경고 2회 누적으로':'운영자 조치로'} 퇴장 처리되었습니다.</p><p class="hint">현재 브라우저의 체험 세션에만 적용됩니다.</p><button onclick="closeModal()">확인</button>`)}
+</script></body></html>

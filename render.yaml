@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: career-pixel-rpg
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: echo 'No build needed'
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: /var/data/stats.sqlite
+      - key: COOKIE_SECURE
+        value: '1'
+    disk:
+      name: career-rpg-stats
+      mountPath: /var/data
+      sizeGB: 1
